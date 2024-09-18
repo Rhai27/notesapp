@@ -29,6 +29,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = sanitizeData($_POST['username']);
     $password = sanitizeData($_POST['password']);
     $confirmPassword = sanitizeData($_POST['confirm_password']);
+    
+    // Default birthdate if not provided
+    $bdate = isset($_POST['bdate']) ? sanitizeData($_POST['bdate']) : '2000-01-01';
 
     // Check if both username and password are invalid
     if (validateUsername($username, $conn) && $password !== $confirmPassword) {
@@ -51,9 +54,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     
     try {
         // Insert user into database using prepared statement
-        $sql = "INSERT INTO users (email, username, password) VALUES (?, ?, ?)";
+        $sql = "INSERT INTO users (email, username, password, bdate) VALUES (?, ?, ?, ?)";
         $stmt = $conn->prepare($sql);
-        $stmt->execute([$email, $username, $hashedPassword]);
+        $stmt->execute([$email, $username, $hashedPassword, $bdate]);
         header("Location: ../index.php?registered=true");
         exit();
     } catch (PDOException $e) {
