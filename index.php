@@ -33,7 +33,7 @@
             
             <div class="formcontainer">
                 <div class="label1">
-                    Log out
+                    Log In
                 </div>
                 <div class="label2">
                     Please sign in to continue.
