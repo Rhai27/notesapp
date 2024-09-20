@@ -22,6 +22,12 @@ function hashPassword($password) {
     return password_hash($password, PASSWORD_DEFAULT);
 }
 
+// Function to get default avatar as binary data
+function getDefaultAvatar() {
+    $defaultAvatarPath = '../icon/default-avatar.png';  // Path to your default avatar image
+    return file_get_contents($defaultAvatarPath);       // Get the binary data of the image
+}
+
 // Check if form is submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Get form data
@@ -37,6 +43,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $fname = isset($_POST['fname']) ? sanitizeData($_POST['fname']) : 'Guest';
     $lname = isset($_POST['lname']) ? sanitizeData($_POST['lname']) : 'User';
 
+    // Get the default avatar data as binary
+    $avatar = getDefaultAvatar();  // This will be inserted into the longblob field
+    
     // Check if both username and password are invalid
     if (validateUsername($username, $conn) && $password !== $confirmPassword) {
         header("Location: ../signup.php?case3=true");
@@ -58,9 +67,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     
     try {
         // Insert user into database using prepared statement
-        $sql = "INSERT INTO users (email, username, password, bdate, fname, lname) VALUES (?, ?, ?, ?, ?, ?)";
+        $sql = "INSERT INTO users (email, username, password, bdate, fname, lname, avatar) VALUES (?, ?, ?, ?, ?, ?, ?)";
         $stmt = $conn->prepare($sql);
-        $stmt->execute([$email, $username, $hashedPassword, $bdate, $fname, $lname]);
+        $stmt->execute([$email, $username, $hashedPassword, $bdate, $fname, $lname, $avatar]);
         header("Location: ../index.php?registered=true");
         exit();
     } catch (PDOException $e) {
