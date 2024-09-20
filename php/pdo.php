@@ -1,5 +1,7 @@
 <?php
 
+require_once('db_connection.php');  // Make sure this path is correct
+
 class Connection
 {
     public $pdo = null;
@@ -7,8 +9,8 @@ class Connection
     public function __construct()
     {
         try {
-            $this->pdo = new PDO('mysql:server=localhost;dbname=note_db', 'root', '');
-            $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            // Use the connection from the function
+            $this->pdo = connectToDatabase();  // This will return the PDO connection
         } catch (PDOException $exception) {
             echo "ERROR: " . $exception->getMessage();
         }
