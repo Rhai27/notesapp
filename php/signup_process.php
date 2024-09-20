@@ -1,3 +1,8 @@
+To add a default value for `lname` along with `fname`, you can modify the registration script similarly to how you handled `fname`. Here's the updated code:
+
+### Updated Registration Code
+
+```php
 <?php
 
 // Include the function to connect to the database
@@ -33,8 +38,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Default birthdate if not provided
     $bdate = isset($_POST['bdate']) ? sanitizeData($_POST['bdate']) : '2000-01-01';
 
-    // Default fname if not provided
+    // Default fname and lname if not provided
     $fname = isset($_POST['fname']) ? sanitizeData($_POST['fname']) : 'Guest';
+    $lname = isset($_POST['lname']) ? sanitizeData($_POST['lname']) : 'User';  // Default value for lname
 
     // Check if both username and password are invalid
     if (validateUsername($username, $conn) && $password !== $confirmPassword) {
@@ -57,9 +63,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     
     try {
         // Insert user into database using prepared statement
-        $sql = "INSERT INTO users (email, username, password, bdate, fname) VALUES (?, ?, ?, ?, ?)";
+        $sql = "INSERT INTO users (email, username, password, bdate, fname, lname) VALUES (?, ?, ?, ?, ?, ?)";  // Added lname
         $stmt = $conn->prepare($sql);
-        $stmt->execute([$email, $username, $hashedPassword, $bdate, $fname]);
+        $stmt->execute([$email, $username, $hashedPassword, $bdate, $fname, $lname]);  // Added lname
         header("Location: ../index.php?registered=true");
         exit();
     } catch (PDOException $e) {
@@ -71,3 +77,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 
 ?>
+```
+
+### Key Changes:
+- Added a line to set a default value for `lname`, similar to how you did for `fname`. If `lname` is not provided, it defaults to `'User'`.
+- Updated the SQL `INSERT` statement to include `lname` as well.
+- Made sure to pass `lname` to the execute function.
+
+With these changes, your registration process will now handle both first and last names, providing default values if they are not supplied by the user.
